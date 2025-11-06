@@ -53,7 +53,11 @@ export function LoginForm({className,...props}: React.ComponentProps<"div">)
                 <Input id="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button>
+                <Link href="/dashboard">
+                  Login
+                  </Link>
+                  </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link href="/signup">Sign up</Link>
                 </FieldDescription>
