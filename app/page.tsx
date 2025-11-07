@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import CardSwap ,{Card} from '@/components/CardSwap';
+import UploadPage from './upload/page';
 import { FileCheck, Users, MessageSquare, CheckCircle, ArrowRight, Upload, Eye, Send } from 'lucide-react';
 
 export default function LandingPage() {
@@ -162,8 +163,9 @@ export default function LandingPage() {
         </div>
       </section>
 
+
       {/* Footer */}
-     
     </div>
+    
   );
 }

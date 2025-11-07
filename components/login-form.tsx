@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Home } from "lucide-react"
 import {
   Card,
   CardContent,
@@ -21,13 +22,26 @@ export function LoginForm({className,...props}: React.ComponentProps<"div">)
 {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-         <CardHeader>
+      <Card >
+       
+         <CardHeader className="flex justify-around">
+          <div>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
+          </div>
+          <div>
+         <CardDescription>
+            <Link  href="/" className="flex items-end justify-end-safe">
+           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-300">
+            <Home className="w-5 h-5 " aria-hidden="true" />
+           </div>
+           </Link>
+      </CardDescription>
+      </div>
         </CardHeader>
+       
         <CardContent>
           <form>
             <FieldGroup>
@@ -64,6 +78,7 @@ export function LoginForm({className,...props}: React.ComponentProps<"div">)
               </Field>
             </FieldGroup>
           </form>
+           
         </CardContent>
       </Card>
       
