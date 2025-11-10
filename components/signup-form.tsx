@@ -44,11 +44,11 @@ export function SignupForm({
         </CardHeader>
         <CardContent>
 
-          <form>
+          <form action="/api/auth/signup" method="post">
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input id="name" type="text" placeholder="John Doe" required />
+                <Input id="name" name="name" type="text" placeholder="John Doe" required />
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -56,14 +56,16 @@ export function SignupForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
+                  name="email"
                   required
                 />
               </Field>
                <Field>
-                <FieldLabel htmlFor="number">Phone</FieldLabel>
+                <FieldLabel htmlFor="phone">Phone</FieldLabel>
                 <Input
-                  id="number"
-                  type="number"
+                  id="phone"
+                  name="phone"
+                  type="tel"
                   placeholder="Enter number Phone"
                   required
                 />
@@ -72,13 +74,13 @@ export function SignupForm({
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input id="password" type="password" required />
+                    <Input id="password" name="password" type="password" required />
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm-password">
                       Confirm Password
                     </FieldLabel>
-                    <Input id="confirm-password" type="password" required />
+                    <Input id="confirm-password" name="confirmPassword" type="password" required />
                   </Field>
                 </Field>
                 <FieldDescription>

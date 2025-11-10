@@ -43,7 +43,7 @@ export function LoginForm({className,...props}: React.ComponentProps<"div">)
         </CardHeader>
        
         <CardContent>
-          <form>
+          <form action="/api/auth/login" method="post">
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -51,6 +51,7 @@ export function LoginForm({className,...props}: React.ComponentProps<"div">)
                   id="email"
                   type="email"
                   placeholder="m@example.com"
+                  name="email"
                   required
                 />
               </Field>
@@ -64,14 +65,10 @@ export function LoginForm({className,...props}: React.ComponentProps<"div">)
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
-                <Button>
-                <Link href="/dashboard">
-                  Login
-                  </Link>
-                  </Button>
+                <Button type="submit">Login</Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link href="/signup">Sign up</Link>
                 </FieldDescription>

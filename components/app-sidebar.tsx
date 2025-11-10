@@ -16,41 +16,57 @@ import {
 } from "@/components/ui/sidebar"
 
 // This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+const navMain = [
+  {
+    title: "Documents",
+    url: "#",
+    icon: BookOpen,
+    items: [
+      {
+        title: "Papers Send",
+        url: "#",
+      },
+      {
+        title: "Papers Receive",
+        url: "#",
+      },
+    ],
   },
-  navMain: [
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Papers Send",
-          url: "#",
-        },
-        {
-          title: "Papers Receive",
-          url: "#",
-        },
-      ],
-    },
-
-  ],
-
-}
+]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = React.useState<{ name: string; email: string; avatar: string }>(
+    { name: "", email: "", avatar: "/avatars/shadcn.jpg" }
+  )
+
+  React.useEffect(() => {
+    let active = true
+    ;(async () => {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" })
+        const data = await res.json()
+        if (!active) return
+        if (data && data.user) {
+          setUser({
+            name: data.user.name || "",
+            email: data.user.email || "",
+            avatar: data.user.avatar || "/avatars/shadcn.jpg",
+          })
+        }
+      } catch {
+        // ignore
+      }
+    })()
+    return () => { active = false }
+  }, [])
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

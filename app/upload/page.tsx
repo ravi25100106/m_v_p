@@ -7,11 +7,18 @@ import { Upload, FileText, Trash2 } from "lucide-react";
 const UploadSection = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [sending, setSending] = useState(false);
 
   // ✅ Add files
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files ? Array.from(event.target.files) : [];
-    setFiles((prev) => [...prev, ...selectedFiles]);
+    const allowed = new Set([
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ]);
+    const filtered = selectedFiles.filter((f) => allowed.has(f.type));
+    setFiles((prev) => [...prev, ...filtered]);
   };
 
   // ✅ Drop files
@@ -19,7 +26,13 @@ const UploadSection = () => {
     event.preventDefault();
     setIsDragging(false);
     const droppedFiles = Array.from(event.dataTransfer.files);
-    setFiles((prev) => [...prev, ...droppedFiles]);
+    const allowed = new Set([
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ]);
+    const filtered = droppedFiles.filter((f) => allowed.has(f.type));
+    setFiles((prev) => [...prev, ...filtered]);
   };
 
   // ✅ Delete file
@@ -28,8 +41,23 @@ const UploadSection = () => {
   };
 
   // ✅ Send action
-  const handleSend = () => {
-    alert(`${files.length} file(s) sent successfully!`);
+  const handleSend = async () => {
+    if (files.length === 0) return;
+    try {
+      setSending(true);
+      const form = new FormData();
+      form.append("file", files[0]);
+      const res = await fetch("/api/send-file", { method: "POST", body: form });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({} as any));
+        alert(data?.error || "Failed to send file");
+        return;
+      }
+      alert("File sent successfully!");
+      setFiles([]);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -55,13 +83,14 @@ const UploadSection = () => {
           <input
             type="file"
             multiple
+            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             onChange={handleFileChange}
             className="hidden"
           />
         </label>
 
         <p className="text-xs text-gray-500 mt-3">
-          Supported: Images, PDFs, Docs, etc.
+          Supported: PDF (.pdf) and Word (.doc, .docx)
         </p>
       </motion.div>
 
@@ -107,15 +136,18 @@ const UploadSection = () => {
                     </div>
 
                     <div className="p-3 flex justify-between items-center overflow-hidden text-clip">
-                       <div>
-                         <p className="truncate text-sm font-semibold text-gray-800 "> {file.name} </p> 
-                         <p className="text-xs text-gray-500"> {(file.size / 1024).toFixed(1)} KB </p> 
-                         </div>
-                          </div> 
-                          <button onClick={() => handleDelete(index)} className="text-red-500 hover:text-red-700 transition-all opacity-0 group-hover:opacity-100 flex items-end-safe" title="Delete File" >
-                       <Trash2 className="w-5 h-5" />
-                        </button>
-                   
+                      <div>
+                        <p className="truncate text-sm font-semibold text-gray-800">{file.name}</p>
+                        <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(1)} KB</p>
+                      </div>
+                      <button
+                        onClick={() => handleDelete(index)}
+                        className="text-red-500 hover:text-red-700 transition-all opacity-0 group-hover:opacity-100"
+                        title="Delete File"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -125,12 +157,13 @@ const UploadSection = () => {
 
         {/* ✅ Send Button */}
         {files.length > 0 && (
-          <div className="mt-6 flex justify-center lg:justify-end">
+          <div className="mt-6 flex justify-end">
             <button
               onClick={handleSend}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all"
+              disabled={sending}
+              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all"
             >
-              Send
+              {sending ? "Sending..." : "Send"}
             </button>
           </div>
         )}
